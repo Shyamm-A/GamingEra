@@ -11,7 +11,7 @@ function _getToken() {
     return localStorage.getItem('ge_token') || '';
 }
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = '';
 
 async function _api(url, options = {}) {
     const token = _getToken();
