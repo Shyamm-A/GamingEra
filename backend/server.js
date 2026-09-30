@@ -20,6 +20,7 @@ const ADMIN_PASSWORD = 'admin123';
 // Middleware
 // ========================
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Allow frontend (port 5500) to call this backend (port 3000)
 app.use(cors({
@@ -163,6 +164,9 @@ app.put('/api/orders/:id/status', requireAdmin, (req, res) => {
 // ========================
 // Start Server
 // ========================
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 app.listen(PORT, () => {
     console.log(`\n===========================================================`);
     console.log(`🎮  GamingEra Backend API is running!`);
