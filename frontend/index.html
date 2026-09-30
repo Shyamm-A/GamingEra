@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamingEra | PS5, PS4, PS3 & PS2 Games CD Store</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts imported inside style.css -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- --- Header Navigation Bar --- -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo" id="nav-logo-btn">
+                <i class="fa-solid from-bracket-alt fa-gamepad gradient-text"></i>
+                Gaming<span>Era</span>
+            </a>
+            
+            <nav class="nav-links">
+                <span class="nav-link active" data-view="home">Home</span>
+                <span class="nav-link" data-view="shop">Shop All</span>
+            </nav>
+
+            <div class="nav-controls">
+                <button class="nav-btn" id="cart-toggle-btn" title="Shopping Cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count" id="cart-badge-count">0</span>
+                </button>
+
+                <div class="auth-btn-group" id="auth-header-actions">
+                    <!-- Dynamic Auth states go here: Login/Register buttons or User dropdown -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- --- Main Customer Layout Panels (SPA Content Area) --- -->
+    <main class="container">
+        
+        <!-- ================= 1. HOME VIEW ================= -->
+        <section id="view-home" class="spa-view">
+            <!-- Hero banner banner slider -->
+            <div class="hero-banner">
+                <div class="hero-overlay"></div>
+                <img src="assets/gaming_banner.png" alt="Gaming Banner" class="hero-img">
+                <div class="hero-content">
+                    <span class="hero-tag">Exclusive Gaming Destination</span>
+                    <h1 class="hero-title text-glow">Step Into Next-Gen Gaming</h1>
+                    <p class="hero-subtitle">Premium PlayStation game disks — PS5, PS4, PS3 & retro PS2 titles, rare pre-owned gems, and limited-edition collections at unbeatable prices.</p>
+                    <button class="btn-primary" id="hero-shop-btn">Explore Shop</button>
+                </div>
+            </div>
+
+            <!-- Features USP Info Bar -->
+            <div class="info-bar">
+                <div class="info-card">
+                    <i class="fa-solid fa-truck-fast info-icon"></i>
+                    <div>
+                        <h3>Fast Delivery</h3>
+                        <p>Safe physical game shipping nationwide</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <i class="fa-solid fa-compact-disc info-icon"></i>
+                    <div>
+                        <h3>100% Original Disks</h3>
+                        <p>Certified 100% genuine game disks</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <i class="fa-solid fa-shield-halved info-icon"></i>
+                    <div>
+                        <h3>Secure Payments</h3>
+                        <p>Cash on Delivery & Secure gateways</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop Quick Categories Section -->
+            <div class="section-title-wrap">
+                <div>
+                    <span class="section-subtitle">Quick Access</span>
+                    <h2 class="section-title">Shop by Category</h2>
+                </div>
+            </div>
+            
+            <div class="category-grid" id="home-category-list">
+                <!-- Dynamic categories fed via app.js -->
+            </div>
+
+            <!-- Featured Releases Section -->
+            <div class="section-title-wrap">
+                <div>
+                    <span class="section-subtitle">Specially Curated</span>
+                    <h2 class="section-title">Featured Titles</h2>
+                </div>
+                <button class="btn-secondary" id="home-view-all-featured">View All</button>
+            </div>
+            <div class="products-grid" id="home-featured-grid" style="margin-bottom: 50px;">
+                <!-- Dynamically populated product cards -->
+            </div>
+
+            <!-- Best Sellers & Deals Grid Section -->
+            <div class="section-title-wrap">
+                <div>
+                    <span class="section-subtitle">Hot Deals</span>
+                    <h2 class="section-title">Deals & Best Sellers</h2>
+                </div>
+            </div>
+            <div class="products-grid" id="home-deals-grid" style="margin-bottom: 80px;">
+                <!-- Dynamically populated deals and best seller cards -->
+            </div>
+        </section>
+
+        <!-- ================= 2. SHOP LISTING VIEW ================= -->
+        <section id="view-shop" class="spa-view" style="display: none; margin-top: 40px;">
+            <div class="shop-layout">
+                <!-- Filters Sidebar -->
+                <aside class="filters-sidebar">
+                    <!-- Search game name -->
+                    <div class="filter-group">
+                        <h4 class="filter-title">Search Games</h4>
+                        <div class="search-input-wrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="filter-search" placeholder="Type title, genre, tag...">
+                        </div>
+                    </div>
+
+                    <!-- Platform categories -->
+                    <div class="filter-group">
+                        <h4 class="filter-title">Platform</h4>
+                        <div id="filter-platforms">
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="PS5 Games" class="platform-checkbox"> PS5 Games
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="PS4 Games" class="platform-checkbox"> PS4 Games
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="PS3 Games" class="platform-checkbox"> PS3 Games
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="PS2 Games" class="platform-checkbox"> PS2 Games
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Pre-owned Games" class="platform-checkbox"> Pre-Owned
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Limited Edition Collections" class="platform-checkbox"> Limited Edition
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Genre categories -->
+                    <div class="filter-group">
+                        <h4 class="filter-title">Genre</h4>
+                        <div id="filter-genres">
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Action" class="genre-checkbox"> Action & Adventure
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Sports" class="genre-checkbox"> Sports
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Racing" class="genre-checkbox"> Racing
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Horror" class="genre-checkbox"> Horror & Survival
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <!-- Price range -->
+                    <div class="filter-group">
+                        <h4 class="filter-title">Price Limit</h4>
+                        <div class="price-range">
+                            <input type="range" id="filter-price-slider" class="price-range-slider" min="0" max="25000" step="500" value="25000">
+                            <div class="price-range-labels">
+                                <span>₹0</span>
+                                <span id="price-slider-value">Max: ₹25,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="btn-reset-filters" style="width: 100%; margin-top: 10px;">
+                        <i class="fa-solid fa-rotate-left" style="margin-right: 8px;"></i> Reset Filters
+                    </button>
+                </aside>
+
+                <!-- Grid Products Display -->
+                <div class="products-display">
+                    <div class="section-title-wrap" style="margin-bottom: 0;">
+                        <div>
+                            <span class="section-subtitle">Catalog Browse</span>
+                            <h2 class="section-title" id="shop-results-title">All Products</h2>
+                        </div>
+                    </div>
+
+                    <!-- Products container grid -->
+                    <div class="products-grid" id="shop-products-grid">
+                        <!-- Dynamically populated cards via filter selection -->
+                    </div>
+
+                    <!-- Empty state -->
+                    <div class="no-products" id="shop-empty-state" style="display: none;">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <h3>No Games Found</h3>
+                        <p>Adjust your search criteria or price sliders to find games.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 3. PROFILE VIEW ================= -->
+        <section id="view-profile" class="spa-view" style="display: none;">
+            <div class="profile-layout">
+                <aside class="profile-sidebar">
+                    <div class="profile-avatar" id="profile-avatar-initials">SK</div>
+                    <h3 class="profile-username" id="profile-card-name">Shyam Kumar</h3>
+                    <p class="profile-email" id="profile-card-email">shyam@gamingera.com</p>
+
+                    <div class="profile-menu">
+                        <div class="profile-menu-item active" data-tab="profile-orders">
+                            <i class="fa-solid fa-box-open"></i> Order History
+                        </div>
+                        <div class="profile-menu-item" data-tab="profile-details">
+                            <i class="fa-solid fa-user-gear"></i> Shipping Details
+                        </div>
+                        <div class="profile-menu-item logout" id="profile-logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="profile-content-card">
+                    <!-- Subtab A: Orders -->
+                    <div id="profile-orders-tab" class="profile-tab-content">
+                        <h2 class="profile-section-title">Your Order History</h2>
+                        <div class="order-history-list" id="order-history-container">
+                            <!-- Dynamic order history list -->
+                        </div>
+                    </div>
+
+                    <!-- Subtab B: Details -->
+                    <div id="profile-details-tab" class="profile-tab-content" style="display: none;">
+                        <h2 class="profile-section-title">Edit Shipping Address</h2>
+                        <form id="profile-address-form">
+                            <div class="form-group">
+                                <label for="prof-name">Full Name</label>
+                                <input type="text" id="prof-name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-phone">Phone Number</label>
+                                <input type="text" id="prof-phone" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-address">Street Address</label>
+                                <input type="text" id="prof-address" class="form-input" required placeholder="Apartment, Lane, Area">
+                            </div>
+                            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div>
+                                    <label for="prof-city">City</label>
+                                    <input type="text" id="prof-city" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="prof-pincode">PIN / Postal Code</label>
+                                    <input type="text" id="prof-pincode" class="form-input" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary" style="margin-top: 10px;">Update Information</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 4. CHECKOUT VIEW ================= -->
+        <section id="view-checkout" class="spa-view" style="display: none; margin-top: 40px; margin-bottom: 80px;">
+            <div class="checkout-grid">
+                <!-- Shipping and Payment Form -->
+                <div class="checkout-card">
+                    <h2 class="checkout-title">1. Shipping Address</h2>
+                    <form id="checkout-form">
+                        <div class="form-group">
+                            <label for="check-name">Full Name</label>
+                            <input type="text" id="check-name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="check-phone">Phone Number</label>
+                            <input type="text" id="check-phone" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="check-address">Street Address</label>
+                            <input type="text" id="check-address" class="form-input" required placeholder="Flat / House No, Street name, Area">
+                        </div>
+                        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <label for="check-city">City</label>
+                                <input type="text" id="check-city" class="form-input" required>
+                            </div>
+                            <div>
+                                <label for="check-pincode">PIN / Postal Code</label>
+                                <input type="text" id="check-pincode" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <h2 class="checkout-title" style="margin-top: 40px;">2. Payment Method</h2>
+                        <div class="payment-options">
+                            <label class="payment-option-label active" id="pay-cod">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                                <span>Cash on Delivery</span>
+                                <input type="radio" name="payment_method" value="Cash on Delivery" checked>
+                            </label>
+                            <label class="payment-option-label" id="pay-card">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>Credit / Debit Card</span>
+                                <input type="radio" name="payment_method" value="Credit/Debit Card">
+                            </label>
+                        </div>
+
+                        <!-- Card payment input forms (dummy) -->
+                        <div id="dummy-card-fields" style="display: none; padding: 16px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 24px;">
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" class="form-input" placeholder="XXXX XXXX XXXX XXXX">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="text" class="form-input" placeholder="MM/YY">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <input type="password" class="form-input" placeholder="***">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; height: 50px; font-size: 16px;">
+                            Place Physical Game Order
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Order items sidebar summary -->
+                <aside class="checkout-card" style="height: fit-content;">
+                    <h2 class="checkout-title">Order Summary</h2>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;" id="checkout-items-list">
+                        <!-- Dynamic items checkout list -->
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px;">
+                            <span style="color: var(--text-muted);">Cart Subtotal</span>
+                            <span id="check-subtotal">₹0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 16px;">
+                            <span style="color: var(--text-muted);">Shipping Fee</span>
+                            <span style="color: var(--accent-green); font-weight: 600;">FREE</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 16px;">
+                            <span style="font-weight: 700; font-size: 16px;">Grand Total</span>
+                            <span style="font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--secondary); text-shadow: 0 0 10px var(--secondary-glow);" id="check-grand-total">₹0</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ================= 5. ORDER CONFIRMED VIEW ================= -->
+        <section id="view-order-confirmed" class="spa-view" style="display: none; text-align: center; padding: 80px 24px; max-width: 600px; margin: 0 auto;">
+            <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(0, 230, 118, 0.1); border: 2px solid var(--accent-green); display: flex; align-items: center; justify-content: center; margin: 0 auto 30px auto; box-shadow: 0 0 25px rgba(0, 230, 118, 0.2);">
+                <i class="fa-solid fa-circle-check" style="font-size: 52px; color: var(--accent-green);"></i>
+            </div>
+            <h1 style="font-size: 36px; margin-bottom: 12px;" class="gradient-text">Order Confirmed!</h1>
+            <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 4px;">Thank you for shopping at GamingEra!</p>
+            <p style="color: var(--text-main); font-weight: 600; font-size: 18px; margin-bottom: 24px;">Your Order ID is: <span id="confirmed-order-id" class="text-cyan-glow" style="color: var(--secondary);">#ORDER_1001</span></p>
+            
+            <div style="background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 40px; font-size: 14px;">
+                <p style="margin-bottom: 8px;"><strong style="color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Deliver To:</strong> <span id="confirmed-order-address" style="float: right;">123, Netaji Marg</span></p>
+                <p style="margin-bottom: 8px;"><strong style="color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Payment Method:</strong> <span id="confirmed-order-payment" style="float: right;">Cash on Delivery</span></p>
+                <p style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05);"><strong style="color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Estimated Delivery:</strong> <span style="float: right; color: var(--accent-green); font-weight: 600;">3-5 Business Days</span></p>
+            </div>
+
+            <div style="display: flex; gap: 16px; justify-content: center;">
+                <button class="btn-primary" id="btn-confirmed-history">View Order History</button>
+                <button class="btn-secondary" id="btn-confirmed-home">Continue Shopping</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- --- Customer Footer Layout --- -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo" style="margin-bottom: 16px;">
+                    <i class="fa-solid fa-gamepad gradient-text"></i>
+                    Gaming<span>Era</span>
+                </a>
+                <p>Premium physical store for PlayStation game disks — PS5, PS4, PS3 & retro PS2 CDs, plus collector's sets. Play beyond boundaries.</p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social-link"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="footer-social-link"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="footer-social-link"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="footer-social-link"><i class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Categories</h3>
+                <div class="footer-links">
+                    <span class="footer-link cursor-pointer" data-category="PS5 Games">PS5 Games</span>
+                    <span class="footer-link cursor-pointer" data-category="PS4 Games">PS4 Games</span>
+                    <span class="footer-link cursor-pointer" data-category="PS3 Games">PS3 Games</span>
+                    <span class="footer-link cursor-pointer" data-category="PS2 Games">PS2 Games</span>
+                    <span class="footer-link cursor-pointer" data-category="Pre-owned Games">Pre-Owned Games</span>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Gaming Era</h3>
+                <div class="footer-links">
+                    <span class="footer-link cursor-pointer" data-view="home">Home</span>
+                    <span class="footer-link cursor-pointer" data-view="shop">Shop Listings</span>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Store Contact</h3>
+                <div class="footer-links" style="color: var(--text-muted); font-size: 14px; gap: 16px;">
+                    <p><i class="fa-solid fa-location-dot" style="margin-right: 10px; color: var(--secondary);"></i> GamingEra HQ, Bengaluru, India</p>
+                    <p><i class="fa-solid fa-phone" style="margin-right: 10px; color: var(--secondary);"></i> +91 98765 43210</p>
+                    <p><i class="fa-solid fa-envelope" style="margin-right: 10px; color: var(--secondary);"></i> help@gamingera.com</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>&copy; 2026 <span>GamingEra</span> Store. Built with Passion for PS Gamers.</p>
+        </div>
+    </footer>
+
+    <!-- --- Shopping Cart Drawer Sidebar --- -->
+    <div class="cart-overlay" id="cart-drawer-overlay"></div>
+    <div class="cart-drawer" id="cart-drawer-body">
+        <div class="cart-header">
+            <h2><i class="fa-solid fa-basket-shopping"></i> Your Cart</h2>
+            <button class="btn-close-drawer" id="cart-close-btn">&times;</button>
+        </div>
+
+        <!-- Scrollable items area -->
+        <div class="cart-items-list" id="cart-items-container">
+            <!-- Dynamic Cart Items list -->
+        </div>
+
+        <!-- Footer calculation panel -->
+        <div class="cart-footer-block">
+            <div class="cart-summary-row">
+                <span class="cart-total-label">Subtotal</span>
+                <span class="cart-total-val" id="cart-subtotal-amount">₹0</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); text-align: center;"><i class="fa-solid fa-truck-ramp-box" style="margin-right: 4px;"></i> Standard Delivery: FREE across all states</p>
+            <button class="btn-primary" id="cart-checkout-btn" style="width: 100%; height: 48px; text-transform: uppercase;">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- --- Modal Overlays System --- -->
+
+    <!-- Modal A: Register & Login Auth Overlay -->
+    <div class="modal-overlay" id="modal-auth">
+        <div class="modal-wrapper">
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="auth-tab-login" data-tab="login">Sign In</div>
+                <div class="auth-tab" id="auth-tab-register" data-tab="register">Sign Up</div>
+            </div>
+            
+            <div class="modal-body">
+                <!-- LOGIN FORM -->
+                <form id="form-login">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-input" placeholder="name@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Login Account</button>
+                    <div class="form-footer-link">
+                        Don't have an account? <span id="switch-to-register">Create one</span>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                        <a href="admin.html" id="login-admin-panel-link" style="font-size: 12px; color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; opacity: 0.5; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
+                            <i class="fa-solid fa-screwdriver-wrench" style="font-size: 11px;"></i> Admin Panel
+                        </a>
+                    </div>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="form-register" style="display: none;">
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" class="form-input" placeholder="e.g. Shyam Kumar" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="name@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" class="form-input" placeholder="Create robust password" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Register New Account</button>
+                    <div class="form-footer-link">
+                        Already have an account? <span id="switch-to-login">Sign In</span>
+                    </div>
+                </form>
+            </div>
+            <button class="modal-close" style="position: absolute; top: 16px; right: 20px;" id="modal-auth-close-btn">&times;</button>
+        </div>
+    </div>
+
+    <!-- Modal B: Product Details Modal -->
+    <div class="modal-overlay" id="modal-product">
+        <div class="modal-wrapper product-modal-wrap">
+            <div class="modal-header-bar">
+                <div></div> <!-- Empty placeholder -->
+                <button class="modal-close" id="modal-product-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="product-detail-flex" id="product-detail-container">
+                    <!-- Dynamic HTML via javascript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Area -->
+    <div class="toast-container" id="toast-container">
+        <!-- Dynamic Toast nodes generated dynamically here -->
+    </div>
+
+    <!-- --- JS Scripts Inclusion --- -->
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamingEra Store Administration</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: var(--bg-darker);">
+
+    <!-- ================= ADMIN AUTH BLOCKER PAGE ================= -->
+    <div id="admin-auth-blocker" style="display: none; min-height: 100vh; display: grid; place-items: center; padding: 20px;">
+        <div class="modal-wrapper" style="max-width: 420px; border-color: var(--primary);">
+            <div style="background: linear-gradient(135deg, var(--bg-card), rgba(140, 82, 255, 0.15)); padding: 40px 30px; text-align: center; border-bottom: 1px solid var(--glass-border);">
+                <i class="fa-solid fa-screwdriver-wrench" style="font-size: 48px; color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); margin-bottom: 16px;"></i>
+                <h2 style="font-size: 24px; margin-bottom: 8px;">Admin Portal</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">GamingEra Store Control Dashboard</p>
+            </div>
+            
+            <div class="modal-body" style="padding: 30px;">
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-email">Admin Email</label>
+                        <input type="email" id="admin-email" class="form-input" placeholder="admin@gamingera.com" required value="admin@gamingera.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Secure Password</label>
+                        <input type="password" id="admin-password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; height: 46px; margin-top: 10px;">
+                        Authorize Session
+                    </button>
+                    <div style="text-align: center; margin-top: 16px;">
+                        <a href="index.html" style="font-size: 13px; color: var(--text-muted); text-decoration: underline;"><i class="fa-solid fa-arrow-left"></i> Return to Customer Store</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN ADMIN CONTENT PANEL ================= -->
+    <div class="admin-layout" id="admin-panel-main" style="display: none;">
+        
+        <!-- Admin Left Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <a href="index.html" class="admin-logo">
+                <i class="fa-solid fa-screwdriver-wrench gradient-text"></i>
+                Admin<span>Era</span>
+            </a>
+
+            <div class="admin-menu">
+                <div class="admin-menu-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </div>
+                <div class="admin-menu-item" data-tab="inventory">
+                    <i class="fa-solid fa-compact-disc"></i> Games Inventory
+                </div>
+                <div class="admin-menu-item" data-tab="orders">
+                    <i class="fa-solid fa-dolly"></i> Orders Tracker
+                </div>
+                <div class="admin-menu-item" data-tab="users">
+                    <i class="fa-solid fa-users-gear"></i> User Accounts
+                </div>
+                
+                <a href="index.html" class="admin-menu-item" style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+                    <i class="fa-solid fa-store" style="color: var(--secondary);"></i> Customer View
+                </a>
+                <div class="admin-menu-item logout" id="admin-logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Admin Logout
+                </div>
+            </div>
+        </aside>
+
+        <!-- Admin Main Content Area -->
+        <main class="admin-main">
+            
+            <!-- Dynamic Headers -->
+            <div class="admin-header-row">
+                <div class="admin-title-group">
+                    <h1 id="admin-current-tab-title">Operational Dashboard</h1>
+                    <p id="admin-current-tab-subtitle">Real-time indicators & high-impact store variables</p>
+                </div>
+                <div id="admin-header-actions">
+                    <!-- Dynamic button like "Add Product" goes here -->
+                </div>
+            </div>
+
+            <!-- ================= SUB-TAB 1: DASHBOARD ================= -->
+            <section id="admin-view-dashboard" class="admin-tab-section">
+                <!-- Statistics counter grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon-box sales">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Sales Revenue</h3>
+                            <span class="stat-number text-cyan-glow" id="stat-total-sales">₹0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-box orders">
+                            <i class="fa-solid fa-truck-ramp-box"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Disk Orders</h3>
+                            <span class="stat-number" id="stat-total-orders">0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-box users">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Registered Customers</h3>
+                            <span class="stat-number" id="stat-total-users">0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-box products">
+                            <i class="fa-solid fa-compact-disc"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Active Inventory Games</h3>
+                            <span class="stat-number" id="stat-total-products">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders Tracker Table -->
+                <div class="table-card">
+                    <div class="table-header-box">
+                        <h2 style="font-size: 20px;">Recent Purchases</h2>
+                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Latest 5 Orders</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Address</th>
+                                    <th>Amount Paid</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-orders-rows">
+                                <!-- Dynamic recent orders rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SUB-TAB 2: INVENTORY CRUD ================= -->
+            <section id="admin-view-inventory" class="admin-tab-section" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header-box">
+                        <h2 style="font-size: 20px;">Active Store Products</h2>
+                        <!-- Search inventory search bar -->
+                        <div class="search-input-wrap" style="width: 300px;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="inventory-search" placeholder="Filter games by name/platform...">
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Cover</th>
+                                    <th>Game Name</th>
+                                    <th>Platform</th>
+                                    <th>Genre</th>
+                                    <th>Price</th>
+                                    <th>Discount</th>
+                                    <th>Stock Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-rows">
+                                <!-- Dynamic products rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SUB-TAB 3: ORDER MANAGER ================= -->
+            <section id="admin-view-orders" class="admin-tab-section" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header-box">
+                        <h2 style="font-size: 20px;">Customer Deliveries</h2>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Customer Details</th>
+                                    <th>Ordered Items</th>
+                                    <th>Address</th>
+                                    <th>Total Paid</th>
+                                    <th>Shipping Status</th>
+                                    <th>Update Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-rows">
+                                <!-- Dynamic orders rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SUB-TAB 4: USER MANAGER ================= -->
+            <section id="admin-view-users" class="admin-tab-section" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header-box">
+                        <h2 style="font-size: 20px;">Registered Store Members</h2>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Email Address</th>
+                                    <th>Phone Number</th>
+                                    <th>Default Shipping Address</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-rows">
+                                <!-- Dynamic users rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= ADMIN CRUD PRODUCT MODAL ================= -->
+    <div class="modal-overlay" id="modal-admin-product">
+        <div class="modal-wrapper" style="max-width: 600px;">
+            <div class="modal-header-bar">
+                <h2 class="modal-title" id="admin-product-modal-title">Add New Game/Product</h2>
+                <button class="modal-close" id="modal-admin-product-close">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="admin-product-form">
+                    <input type="hidden" id="prod-form-id">
+                    
+                    <div class="form-group">
+                        <label for="prod-form-name">Game / Item Name</label>
+                        <input type="text" id="prod-form-name" class="form-input" required placeholder="e.g. Marvel's Wolverine">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label for="prod-form-category">Display Category</label>
+                            <select id="prod-form-category" class="form-select" required>
+                                <option value="PS5 Games">PS5 Games</option>
+                                <option value="PS4 Games">PS4 Games</option>
+                                <option value="PS3 Games">PS3 Games</option>
+                                <option value="PS2 Games">PS2 Games</option>
+                                <option value="Pre-owned Games">Pre-owned Games</option>
+                                <option value="Limited Edition Collections">Limited Edition Collections</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prod-form-platform">Platform Tag Label</label>
+                            <select id="prod-form-platform" class="form-select" required>
+                                <option value="PS5">PS5</option>
+                                <option value="PS4">PS4</option>
+                                <option value="PS3">PS3</option>
+                                <option value="PS2">PS2</option>
+                                <option value="Special">Special Edition</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label for="prod-form-genre">Genre</label>
+                            <select id="prod-form-genre" class="form-select" required>
+                                <option value="Action">Action &amp; Adventure</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Racing">Racing</option>
+                                <option value="Horror">Horror &amp; Survival</option>
+                                <option value="RPG">RPG &amp; Open World</option>
+                                <option value="Fighting">Fighting &amp; Beat-em-up</option>
+                                <option value="Shooter">Shooter</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prod-form-stock">Disks / Items Stock Quantity</label>
+                            <input type="number" id="prod-form-stock" class="form-input" required min="0" placeholder="e.g. 10">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label for="prod-form-price">Base Price (INR ₹)</label>
+                            <input type="number" id="prod-form-price" class="form-input" required min="0" placeholder="e.g. 3999">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prod-form-discount">Discount Percentage (%)</label>
+                            <input type="number" id="prod-form-discount" class="form-input" required min="0" max="95" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prod-form-image">Product Cover Image URL</label>
+                        <input type="url" id="prod-form-image" class="form-input" required placeholder="https://images.unsplash.com/photo-..." value="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600">
+                        <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">Input a public image link (Unsplash or similar)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prod-form-description">Game Description / Highlight Features</label>
+                        <textarea id="prod-form-description" class="form-input" rows="4" required placeholder="Write a compelling game description..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 16px; margin-top: 24px;">
+                        <button type="submit" class="btn-primary" style="flex-grow: 1;" id="admin-product-submit-btn">Save Product</button>
+                        <button type="button" class="btn-secondary" style="flex-grow: 1;" id="admin-product-cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Floating Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Shared database and admin panels code scripts -->
+    <script src="db.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

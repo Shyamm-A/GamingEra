@@ -1,0 +1,13 @@
+{
+  "name": "gamingera-frontend",
+  "version": "1.0.0",
+  "description": "GamingEra Customer & Admin Frontend — HTML/CSS/JS",
+  "scripts": {
+    "dev": "live-server --port=5500 --host=localhost --open=index.html",
+    "start": "live-server --port=5500 --host=localhost --open=index.html"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "private": true
+}

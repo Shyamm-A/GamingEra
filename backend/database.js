@@ -1,0 +1,218 @@
+/**
+ * database.js - Server-side JSON File Database for GamingEra
+ * Reads and writes data to db.json for full persistence.
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const DB_PATH = path.join(__dirname, 'db.json');
+const DB_VERSION = '3.0';
+
+// ========================
+// Default Seed Data
+// ========================
+const DEFAULT_PRODUCTS = [
+    { id:"prod_1", name:"Marvel's Spider-Man 2", price:4999, platform:"PS5", genre:"Action", category:"PS5 Games", description:"Peter Parker and Miles Morales return for an exciting new adventure. Swing across Marvel's New York with all-new Web Wings.", stock:12, image:"https://images.openai.com/static-rsc-4/0rNt8uZno3mY98hO2FPrQFcS5qi1g6JjXrvPz3tPobSrg9K0iQ_PidO3mCi0SMi8j7hfHw3hQMaPfJbKJZaNowO_tYpR8Go6ptlpz7mw-_J_sTi_Deojg9YZO_l6bT7Ox_pIosKcqYkT1XklpwGHNoA2VhmVwd7MKhqOMzvrz3OEGTYc64Ltl-lFWg_uad7C?purpose=fullsize", isFeatured:true, isBestSeller:true, discount:10, screenshots:["https://images.openai.com/static-rsc-4/QlIUuQIqihvlDijvupeFE5bc2upgYRDaU1xYLFOmW2HsObOTzzqRMpVLCc0p6Meh6jk32NYAcaIb7bAkhqwB72t1YYY7iUccNmT_NcCA11gQ3QskFOFyMtwYjsloPnkvRerAuAPqbuHrsOMdSr3Xki-eU_0g92HxPlXkG_e4lkO5fEzSlF8mgGF7hgS3mtdz?purpose=fullsize","https://images.openai.com/static-rsc-4/Cy9fBK5BJcDwsAIq9F_1XKGFK1aYGgdcbDIf1_4cMlQ_10RZu_9lRu_b6PaoxYFl17c5igXWhVCzcHbA88YQRG-40dY9G17d2rpi7_hFfpaxgHBxgdI7wsS1AqFlBbFjV6hq_IjsZFU3qPpO-ySQyvwZMlq7Kl3zHgNRVGzQgGUkRRBz1oDeylV2gTLdWQoA?purpose=fullsize"] },
+    { id:"prod_2", name:"God of War Ragnarök", price:3999, platform:"PS5", genre:"Action", category:"PS5 Games", description:"Join Kratos and Atreus on a mythic journey for answers before Ragnarök arrives. Travel through Norse realms and battle fierce gods.", stock:8, image:"https://images.openai.com/static-rsc-4/TVDXcNjDcgfA49gOUZ_FsuExDkbRixzvIpKlQmhsKlHuvsdgZrrLQOVQUZnC3YD8OzTf5kZclYnLDKcxgwM0I27zyeJWVQHQzTt_MkA0DE2Hky87kzI-ZvdPJbC6p8_0ezncW24NlYY9oTNdj-KEp7ZvB0SWgd5vwg5j9Q2z0JDacqsKUzKRxqB3l7pLzmfn?purpose=fullsize", isFeatured:true, isBestSeller:false, discount:0, screenshots:["https://images.openai.com/static-rsc-4/S9CvkWp6-OzmyjXRGWL5wWu4CIj7np7EauEFisNfh14D9z18x4r-aWoRJub5jDp0OTMzwUcKDMZptgniud18dipUm6H8fpQjbOjrJUfVELyeigEYSqrUNsHJ1ZA3Dl7d7IUDB2SLKX7KVkEhq2J-jPjKlPmA_EHYzYh-r6Jy2HQ2DHGuS-L61TtNDeSyCD5-?purpose=fullsize"] },
+    { id:"prod_4", name:"EA Sports FC 24", price:4299, platform:"PS5", genre:"Sports", category:"PS5 Games", description:"EA SPORTS FC 24 marks the beginning of the future of football. Built on HyperMotionV technology for the most authentic experience.", stock:15, image:"https://images.openai.com/static-rsc-4/5r2tTxMdgydmJh5i8F_Lr33bLANZFkqL73jaEA-3tRIpPPopUr6qMp1zN71bowV8LS_ppVLYl6fKZYTp14ke-JKeq7VgVLY9zai0XvM-96NpgmoAEVPmu9t_8z4-FTm46QaMWfJIlUkLxXQ0BuUyjboJMHdKSQB9OBoNoa0taXjDgoRPitua5cy7JMd26-EJ?purpose=fullsize", isFeatured:false, isBestSeller:true, discount:0, screenshots:[] },
+    { id:"prod_5", name:"Gran Turismo 7", price:3499, platform:"PS5", genre:"Racing", category:"PS5 Games", description:"The Real Driving Simulator returns. Gran Turismo 7 brings together the very best features for casual and competitive racers alike.", stock:5, image:"https://images.openai.com/static-rsc-4/pGfQv-e7oNsPwnUYv9Ef4nHabzuel8wYxWP-rl_6bprLUI8oNW5nQ1USSMt9zN5AMSlN1rjh08wPrhum63TKp8EfVJOAQKBwOKaUifJUY2KUmaC4v48B2kZBtqwYPg_5R_3mc_xRUVgAKZeQnsyNzhsFdt7iwazuAoznFuSRD89hT-yiuLTvzsQ1yIBhRm24?purpose=fullsize", isFeatured:true, isBestSeller:false, discount:20, screenshots:[] },
+    { id:"prod_6", name:"Resident Evil 4 Remake", price:3799, platform:"PS5", genre:"Horror", category:"PS5 Games", description:"Six years after Raccoon City. Leon S. Kennedy is sent to rescue the president's kidnapped daughter from a sinister cult.", stock:6, image:"https://images.openai.com/static-rsc-4/o075TH-f3ANQ3mhAjI2kloctWcikCLiHPdoCemDPj1SXDa7lKrYE5kWi2_QeND2rQOtG2-USdcdkurhLEmcgfL9_dnx4VoOnIkXUW3lkt6J49x82l8_rxv1ehDSK3MOsiaZI3cn96hklrSLSGR5gDDmF8vNefxucLTg-s0_6t6priGyJH-Z2jbFpOW8EYROl?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_12", name:"Grand Theft Auto V", price:1999, platform:"PS4", genre:"Action", category:"PS4 Games", description:"Street hustler, retired bank robber, and fearsome psychopath pull off a series of dangerous heists in Los Santos.", stock:14, image:"https://images.openai.com/static-rsc-4/mu1u9cTVV1QGbaQ694oAl_Be2NVO-ZGbAY3UPzRvFblNjQIDuqZurHj462zKn11sMz559dC_XdGFDOCMqGjkRktprzfJ_zY9HUfQ1jdDMuR9opwou6xNhgOOdnbNDH6ZOj7qMgdWKDlwlBh46IUvpmO_PdFkd4yQamiIRi7TsLK_9Zm9gAemdKF52fMpthU2?purpose=fullsize", isFeatured:false, isBestSeller:true, discount:10, screenshots:[] },
+    { id:"prod_13", name:"Red Dead Redemption 2", price:2499, platform:"PS4", genre:"Action", category:"PS4 Games", description:"Arthur Morgan and the Van der Linde gang are outlaws on the run across the rugged heartland of America.", stock:9, image:"https://images.openai.com/static-rsc-4/2eD_N0lulz_hBMkEeqnFV5QKhepthjH8k75qcYaAa4IX-TJ00lJ5LqK4kdpTzpxVm-VS-1tN6uZAt6eg79jw1EZvU7xFiCOKRre7J1H-ed1NM2HztoUzI4_GvuntL9YqMq63qjcusrXDl1ToeQFLIhbeC5MuaUIDfQFPIjSgJKBv1gc4Q-sLehEUC3x-SJg6?purpose=fullsize", isFeatured:true, isBestSeller:true, discount:0, screenshots:[] },
+    { id:"prod_14", name:"The Witcher 3: Wild Hunt", price:1499, platform:"PS4", genre:"Action", category:"PS4 Games", description:"Track down the Child of Prophecy — a living weapon — across a war-ravaged, politically complex world.", stock:10, image:"https://images.openai.com/static-rsc-4/J6EEEXskZHfD6h4Mcg8P8HYFIX9CWXF46_wjvcGpZIkwUVNbVb-zFVqSlDeb1hmeEEz9jy4S5hbqTPHNT5BXUQWkUEE0GqvG_1odUxRXNKrNtderolpDri-7HFevf48W-YBUhteAVOajCWbLf17FD26JRpxYXhbPSC5-5L5lhfOb3yTeYsJC7u8sQyXNOgBx?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:25, screenshots:[] },
+    { id:"prod_15", name:"Horizon Zero Dawn", price:1299, platform:"PS4", genre:"Action", category:"PS4 Games", description:"Take on the role of skilled hunter Aloy in a vibrant world inhabited by mysterious mechanized creatures.", stock:7, image:"https://images.openai.com/static-rsc-4/n4Z0GEWV3LTA72XSWurXWerxfDk7ZL1KqeIazrf46_36Qpu64SH7wpo3TOym-s9yryml7jPFv5Ia0L7cq4Af1tbiIYnx9Pkf9wMAZ9vx0GExALNxKy1gHx-eUTvbOSAeDep88hYxmy7TWe-TJP9gbls5OyjuszgW5pFZyxSQju-ipN8Iihk8y-AxYReHkSa5?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_16", name:"Uncharted 4: A Thief's End", price:1199, platform:"PS4", genre:"Action", category:"PS4 Games", description:"Nathan Drake, retired fortune hunter, is forced back into a globe-trotting adventure with much more personal stakes.", stock:6, image:"https://images.openai.com/static-rsc-4/_-Y3Oc8qiYKRAJtD9DqRg4uAPxD2S8YFkK9xmsU2xykZMUd_EhG086lsWfvfONpO0_262F7aJvsYMWEZwhNeY7gFCNcG7eAs_JYltPZu5x3uH-6Vft3NgBO6FVP4IBTwAXTOm_QT30Y1z9XvZK-uD4O7e9GpkuXjgQH9SoAhRRt6VNxSWoMqTN_wFPejsEw_?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:15, screenshots:[] },
+    { id:"prod_3", name:"Elden Ring (Pre-Owned)", price:2499, platform:"PS4", genre:"Action", category:"Pre-owned Games", description:"Rise, Tarnished, and become an Elden Lord. Gentle pre-owned disk with original case.", stock:3, image:"https://images.openai.com/static-rsc-4/dYPQE5KupUviSGXNa258T_WB-wOlB4pJT8IVqqM2yMUVlRo0088unLdzcQx9lJFz2HIyPMiY3nfX2Bl8cQlarpDTHwzZlv0hhVU15_phV_VPwF9yYFrVTAWh6jBbv1Bh2dF5WiNPkGS9jzZ7iEJ1ZrkvDCjqRZbkFaxyl9Qgi_MhLo1Y11gme8a1uVPNrclH?purpose=fullsize", isFeatured:false, isBestSeller:true, discount:15, screenshots:[] },
+    { id:"prod_7", name:"The Last of Us Part II (Pre-Owned)", price:1599, platform:"PS4", genre:"Horror", category:"Pre-owned Games", description:"Ellie and Joel's journey continues in a heart-wrenching sequel. Pristine pre-owned disk.", stock:2, image:"https://images.openai.com/static-rsc-4/tSbPgFNkk98WOUAMHAyrfSfT8I8g8sRRraWfdRaPgu-zXd53NLcni_s5F7_gQ6yVUyMzX9JiNk-N9IXOGYL5uQFio7npm8mYlPVaTBSp4s1UpjP4id_Jnshdxvj0an_xtMK8uIidCFKc7vY2Vzd81_ZEyFu7_P13lNOrWDOrBikNTzanevyDmJEp1Mi2dGUS?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:5, screenshots:[] },
+    { id:"prod_21", name:"Ghost of Tsushima (Pre-Owned)", price:1999, platform:"PS5", genre:"Action", category:"Pre-owned Games", description:"Open-world action adventure on PS5. Certified scratchless disc with Iki Island expansion.", stock:4, image:"https://images.openai.com/static-rsc-4/7BVu4shj4zOfpoT1kAoy6gW84VYiyuHPSD0x9PiP4hFIK8EcRvn1FFT2F8TkO2KnFW-vioDqFz04NAetlH_5R-c8mZdoa_ci4jd0UpVOGMJHxahjVtlanCcbwQeNv8vlgSv-t51ZLjGBPTISy-_o0metbqMpsWtVd5qv16L46L3heXXcg__3cTaatWEjcmyI?purpose=fullsize", isFeatured:false, isBestSeller:true, discount:10, screenshots:[] },
+    { id:"prod_22", name:"Spider-Man: Miles Morales (Pre-Owned)", price:1499, platform:"PS4", genre:"Action", category:"Pre-owned Games", description:"Miles Morales masters new powers to become his own Spider-Man. Pristine pre-owned status.", stock:5, image:"https://images.openai.com/static-rsc-4/vBaTPYOPPja3ul4iAyPM101zMKWIZnZR4ET5MJvQ4ayoGv64NDpk2wKhW446yatXMRcSeTLbWEERrkDitB5KL3gBus5FeTVGbVS2HeD9JApxTR-29bJFCF1BSDqh3V5KeZ_Cdf_Ukr_AcC8XZl37g3PtxTtLgydeyjYzr6yR9MZUH8ED9Uq1P2gzGswQvxu-?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_23", name:"Bloodborne (Pre-Owned)", price:899, platform:"PS4", genre:"Horror", category:"Pre-owned Games", description:"Face your fears in the ancient city of Yharnam, cursed with a deadly endemic illness.", stock:2, image:"https://images.openai.com/static-rsc-4/QkZVuE8mjv6tPkNQNXLwHrh1YbJJQ2NVkq2T4VtmZkBaVTJ2MOUODQn7CjYJLqmCKlrSF4hU69ZGLkV7Qtw2sQaUmhi9JOs1-AAVuiQbFwAW1XkL37HkhB_LHjLL9-jRpYCudzUXQhCU8KvmpJA5BTKKpFxla5Awog4q4VFXKhCe4sOY0JDMzyLhbZ4YZgVP?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_11", name:"Elden Ring: Shadow Collector's Edition", price:21999, platform:"Special", genre:"Action", category:"Limited Edition Collections", description:"Premium Collector's Edition with 46cm Messmer statue, 40-page hardcover Artbook, and official digital soundtrack.", stock:2, image:"https://images.openai.com/static-rsc-4/r4CzgXE4KM43Xfk4Q1BCbKsmRJyItES_ggiJkxEhg7f2VqoqAfCZ0rGUA-NTSPPIxFCJvdqQh5Ig4iI4hmB2YsvlR87FFMzxR7SJT25vvsJA08MMTz8ZMQoRzpuqSqJ7XVoDP8MwGyY1SsMgisZoFfciXEnXhobXgEcmTULJrWXc6jV4QLEjKfE3AN2GkiwH?purpose=fullsize", isFeatured:true, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_27", name:"God of War Ragnarök: Jötunn Edition", price:24999, platform:"Special", genre:"Action", category:"Limited Edition Collections", description:"16-inch Mjölnir replica, Brok's screwdriver set, Yggdrasil cloth map, legendary Falcon ring, and steelbook.", stock:3, image:"https://images.openai.com/static-rsc-4/9bp-l3JTKdRtE75wS-V1PX1Pj9W5VSQ7IUjFTdkOZKg1hpvbcWv1SWszrGqCmrsTK5xjWUtYJ_xUb9s7D30L4CfLh9o-bnXJxRyob4fUQphA0zXMMi7765G-pqCvl2wPvfAgrKRHj7kjhM_K8-pqfGZCiGx4RcGwkT_ZZTOvq3SdQtdgXxpYIp8llL1UWmWR?purpose=fullsize", isFeatured:true, isBestSeller:true, discount:0, screenshots:[] },
+    { id:"prod_28", name:"Cyberpunk 2077: Collector's Box", price:18999, platform:"Special", genre:"Action", category:"Limited Edition Collections", description:"Collector's Edition Box with 25cm statue of V, hardcover art book, Quadra keychain and detailed Night City map.", stock:2, image:"https://images.openai.com/static-rsc-4/qwWdbAiTajfU6E2fxonpzEXPkolXImnrRv5VR8I3Je31S0NzUWfdVjKIphA_TvTLZ_gJ5DABFhb4q6n-18SDemQU-LUaarMCSSj-dwazfE7PNYUeFIQZX20_Lax5dhxbGkJkM3b1k7_BWf7J7XlIEwZnJulZAnd_Szg_H7EK3qTRe6WHyFaUCcQx_CEZVPAP?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_31", name:"Grand Theft Auto IV", price:999, platform:"PS3", genre:"Action", category:"PS3 Games", description:"Niko Bellic arrives in Liberty City to escape his past and pursue the American Dream on this legendary PS3 nostalgia CD.", stock:8, image:"https://images.openai.com/static-rsc-4/iF9SVIrL--EawzMbEZp3XP4j7q0phaxvpnZbec8cD_OXrR6npmnWZPdIRvq8YsJkfe3IwgZe1P0SkTRyqJ3MuzrqWGtWzlqcWl6_XoT0w7AfgUIOtB8qxeynv5C5cGDENxOtWb4TDtoHgPCDryfRbAYXlPHXGVYm8DlVCINMHVx4bdsFZ2zONDHx0_sjBJvA?purpose=fullsize", isFeatured:false, isBestSeller:true, discount:0, screenshots:[] },
+    { id:"prod_32", name:"The Last of Us (Original)", price:1199, platform:"PS3", genre:"Horror", category:"PS3 Games", description:"Experience the generation-defining masterpiece that started Ellie and Joel's emotional journey on PS3.", stock:5, image:"https://images.openai.com/static-rsc-4/l0eSXd2nn2_49sYWf9k6n2z-1FJjTEALuLcQjRWmX94SeYn6580n9rTOwRMetP_MW9rsqblytqozlLB5Pl2SMXbodFpahPgJOig4PhTTJBgFGGITCakNlJ1sn3X7R4PexhRbVvb1nkxU_dwR8cBiSJhc9z2i2IPfKCcBwMZha7pRrcNXQiUYemKR1G-zxmnh?purpose=fullsize", isFeatured:true, isBestSeller:true, discount:10, screenshots:[] },
+    { id:"prod_33", name:"Metal Gear Solid 4: Guns of the Patriots", price:1499, platform:"PS3", genre:"Action", category:"PS3 Games", description:"Hideo Kojima's masterpiece — Solid Snake's final mission in a war-torn future on PS3 physical CD.", stock:4, image:"https://images.openai.com/static-rsc-4/c_HGeXkDeh1s1oelxU6v7tHinlTu55cE9OLGuhkjShr9aaJFc7vU0H1zGUmI7tLLfWEHt22nIspRxFn5zw-jv0XUrvD_AuLbUNy7KTy-HtJUgLKmMp7PWE9E_7Vta82QUjxNl-tjPrnMsTU1BvrHe_MSMJhjFXfzIR372Cs7_ZziLU_KEsiCoP0ySZntqWnO?purpose=fullsize", isFeatured:true, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_34", name:"Uncharted 2: Among Thieves", price:899, platform:"PS3", genre:"Action", category:"PS3 Games", description:"Nathan Drake returns in a spectacular action-adventure blockbuster on PS3 CD.", stock:6, image:"https://images.openai.com/static-rsc-4/NJI2LFMeuwjszCsNC0oioWiKAwOAkAxqIb2IrDaWWSm7FlYqXsdq536EAahA_gY9SfN6tXdFA4h7BJg_tUgEb3zk0Do-NxNhYCB8UaStkiidDVtNFYUyqWBqkQmUu1CLr4wLFGY-QdwP6Knj0tpyrmp7wyZid1uOEtaoZ6lp6_aeLBlET9ybhJMyMnKBncPa?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_35", name:"Call of Duty: Black Ops II", price:999, platform:"PS3", genre:"Action", category:"PS3 Games", description:"Near-future Cold War action on PS3 physical disc — one of the most iconic Call of Duty chapters.", stock:7, image:"https://images.openai.com/static-rsc-4/S4Ojah3y9yxy_SYtBdXBvVjCpfMvK3vDiEGWZoZ-NZl3gDAkKfupdnj-863Jni8LUs08GfwqRt_r797nh63vEMa0jElZmogK2pICAWt9tp8YEDybOJJHBWB5K6wtmIq4G_zw9KzsfVbNBHHdVjB9uJTVTEiSDcInvgmaZ6F0V1mnrL4PZIdljeKBvndLcTNv?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:15, screenshots:[] },
+    { id:"prod_36", name:"Grand Theft Auto: San Andreas", price:799, platform:"PS2", genre:"Action", category:"PS2 Games", description:"CJ must go home to Los Santos. The best-selling PS2 game of all time on original nostalgia CD.", stock:6, image:"https://images.openai.com/static-rsc-4/VvhdmXtw4BkY5XPYa2XRbos3OKRbdIXzY7cs3yUCCw68tMi56CemAY0hfG1gwJy8Ed8e1Xgm6BwUg-CD3WybiCjB1bNCeH9lcnG30X5RHpas_buhHvsM2XGF6OQZT8Uus6VvXyf4tjwU8QJp2tvmhI7FsxBwJmWgGWw5g8M-nhesPI-v_fPPT5iLZfM9vn1C?purpose=fullsize", isFeatured:true, isBestSeller:true, discount:10, screenshots:[] },
+    { id:"prod_37", name:"Shadow of the Colossus", price:999, platform:"PS2", genre:"Action", category:"PS2 Games", description:"Defeat sixteen giant colossi to restore the life of a girl. An artistic PS2 masterpiece on retro CD.", stock:3, image:"https://images.openai.com/static-rsc-4/thMa0gjh8OHzWs2-e9yQBw6-IdUUBd5iLaiO10n_XNCL3RmsRjMKt5Ju9DMu7zww2unWRHv4pN6flwCpd2YVkEUwxdNoWCnKsONVGo9U25Sy145S48Vr9RkUVCz7fLFRB_SkBjctXw8O3W5os7QZqJ9rC2kQF0MvE4yH9I34GiNMzxQeg1Z2GApilU_7uEOe?purpose=fullsize", isFeatured:true, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_38", name:"God of War II", price:899, platform:"PS2", genre:"Action", category:"PS2 Games", description:"Kratos journeys to the ends of the Earth to alter his fate in this legendary hack-and-slash PS2 CD.", stock:5, image:"https://images.openai.com/static-rsc-4/5O5GvVxPHBEPLxV1HOsdN6HC6RFO1j3hUZBYZzo40D0mfNuKwffEsBuNhGoE64CPG0rEGl7FFJsD7sDSpRbEc_d5pCP1Zs9-m_Vt9yLu9sZX25pNfdt1wXjXN1g0BTWngooiXtNfHOPGvVKkUMVLd2woQ04CBXBhFcDdJwkKTy3ENQ7y1-FbNHbfaDd5ZeYr?purpose=fullsize", isFeatured:true, isBestSeller:true, discount:0, screenshots:[] },
+    { id:"prod_39", name:"Need for Speed: Most Wanted", price:699, platform:"PS2", genre:"Racing", category:"PS2 Games", description:"Outrun cops, challenge rivals and climb the Blacklist in the most nostalgic PS2 street racing CD ever.", stock:4, image:"https://images.openai.com/static-rsc-4/LClZLw7bWyc6zJbY29WabCwnNzVU8dbvhKYs7aH1Eq6diiD7mrbwXs9c3TrFNSPY4dzklcomtWSPUFo1pJmoaMgvgChfv-0bn4bU7CQbp6Pond9cafQOolSP0esBgjfqVOCdAOKb_dYC--L5KEserTh4htfoksjQJkLusBi-fNIzsjspGjhDoD8XgLsb_9I1?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:0, screenshots:[] },
+    { id:"prod_40", name:"Silent Hill 2", price:1299, platform:"PS2", genre:"Horror", category:"PS2 Games", description:"James Sunderland is drawn to Silent Hill by a letter from his dead wife. The psychological horror masterpiece on PS2 DVD.", stock:2, image:"https://images.openai.com/static-rsc-4/6dpe-dv5dvcEUEYUawFJrHXhZHv7IaAmLKaSlahZitXm9DmSUB_Urx7oO87lgnAUU1cOXNboe0BIhACBVsFwz56mnP2wv5omSAI6zS1-z6Uisn7-Hg04gqSTST0sEe_aJL6TeZEHzSB4EiKjzkXVNQ0LWU9m9oMQSScosshCmHNE5av_-20TPQRFcmUd-5kF?purpose=fullsize", isFeatured:false, isBestSeller:false, discount:20, screenshots:[] }
+];
+
+const DEFAULT_USERS = [
+    { id:"user_1", name:"Shyam Kumar", email:"shyam@gamingera.com", password:"user123", address:"123, Netaji Marg, Indiranagar", city:"Bengaluru", pincode:"560038", phone:"9876543210" }
+];
+
+const DEFAULT_ORDERS = [
+    { id:"order_1001", userId:"user_1", userName:"Shyam Kumar", userEmail:"shyam@gamingera.com", items:[{ productId:"prod_1", name:"Marvel's Spider-Man 2", price:4499, quantity:1, platform:"PS5", image:"https://images.openai.com/static-rsc-4/0rNt8uZno3mY98hO2FPrQFcS5qi1g6JjXrvPz3tPobSrg9K0iQ_PidO3mCi0SMi8j7hfHw3hQMaPfJbKJZaNowO_tYpR8Go6ptlpz7mw-_J_sTi_Deojg9YZO_l6bT7Ox_pIosKcqYkT1XklpwGHNoA2VhmVwd7MKhqOMzvrz3OEGTYc64Ltl-lFWg_uad7C?purpose=fullsize" }], total:4499, shippingAddress:"123, Netaji Marg, Indiranagar, Bengaluru - 560038", paymentMethod:"Cash on Delivery", status:"Delivered", date:"2026-05-30T10:30:00.000Z" }
+];
+
+// ========================
+// Database Initialization
+// ========================
+function initializeDatabase() {
+    if (!fs.existsSync(DB_PATH)) {
+        const initialData = {
+            version: DB_VERSION,
+            products: DEFAULT_PRODUCTS,
+            users: DEFAULT_USERS,
+            orders: DEFAULT_ORDERS
+        };
+        fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2));
+        console.log('✅ db.json created and seeded with default data.');
+    } else {
+        const data = readDB();
+        if (data.version !== DB_VERSION) {
+            data.version = DB_VERSION;
+            data.products = DEFAULT_PRODUCTS;
+            writeDB(data);
+            console.log('🔄 Database version updated and products re-seeded.');
+        }
+    }
+}
+
+function readDB() {
+    const raw = fs.readFileSync(DB_PATH, 'utf-8');
+    return JSON.parse(raw);
+}
+
+function writeDB(data) {
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+}
+
+// ========================
+// Products
+// ========================
+function getProducts() {
+    return readDB().products;
+}
+
+function addProduct(product) {
+    const db = readDB();
+    product.id = 'prod_' + Date.now();
+    product.isFeatured = product.isFeatured || false;
+    product.isBestSeller = product.isBestSeller || false;
+    product.screenshots = product.screenshots || [];
+    db.products.push(product);
+    writeDB(db);
+    return product;
+}
+
+function updateProduct(productId, updates) {
+    const db = readDB();
+    const idx = db.products.findIndex(p => p.id === productId);
+    if (idx === -1) return false;
+    db.products[idx] = { ...db.products[idx], ...updates };
+    writeDB(db);
+    return db.products[idx];
+}
+
+function deleteProduct(productId) {
+    const db = readDB();
+    db.products = db.products.filter(p => p.id !== productId);
+    writeDB(db);
+    return true;
+}
+
+// ========================
+// Users
+// ========================
+function getUsers() {
+    return readDB().users;
+}
+
+function findUserByEmail(email) {
+    return readDB().users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
+}
+
+function findUserById(id) {
+    return readDB().users.find(u => u.id === id) || null;
+}
+
+function createUser(userData) {
+    const db = readDB();
+    const newUser = {
+        id: 'user_' + Date.now(),
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        address: '',
+        city: '',
+        pincode: '',
+        phone: ''
+    };
+    db.users.push(newUser);
+    writeDB(db);
+    return newUser;
+}
+
+function updateUser(userId, updates) {
+    const db = readDB();
+    const idx = db.users.findIndex(u => u.id === userId);
+    if (idx === -1) return false;
+    db.users[idx] = { ...db.users[idx], ...updates };
+    writeDB(db);
+    return db.users[idx];
+}
+
+function deleteUser(userId) {
+    const db = readDB();
+    db.users = db.users.filter(u => u.id !== userId);
+    writeDB(db);
+    return true;
+}
+
+// ========================
+// Orders
+// ========================
+function getOrders() {
+    return readDB().orders;
+}
+
+function getUserOrders(userId) {
+    return readDB().orders.filter(o => o.userId === userId);
+}
+
+function createOrder(orderData) {
+    const db = readDB();
+    const newOrder = {
+        id: 'order_' + (1000 + db.orders.length + 1),
+        ...orderData,
+        status: 'Pending',
+        date: new Date().toISOString()
+    };
+    db.orders.unshift(newOrder);
+
+    // Deduct stock
+    orderData.items.forEach(item => {
+        const product = db.products.find(p => p.id === item.productId);
+        if (product) {
+            product.stock = Math.max(0, product.stock - item.quantity);
+        }
+    });
+
+    writeDB(db);
+    return newOrder;
+}
+
+function updateOrderStatus(orderId, status) {
+    const db = readDB();
+    const idx = db.orders.findIndex(o => o.id === orderId);
+    if (idx === -1) return false;
+    db.orders[idx].status = status;
+    writeDB(db);
+    return db.orders[idx];
+}
+
+// Initialize on require
+initializeDatabase();
+
+module.exports = {
+    getProducts, addProduct, updateProduct, deleteProduct,
+    getUsers, findUserByEmail, findUserById, createUser, updateUser, deleteUser,
+    getOrders, getUserOrders, createOrder, updateOrderStatus
+};
